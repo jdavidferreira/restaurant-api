@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
 const config = require('./config')
 
 const app = express()
@@ -17,6 +18,7 @@ require('./model/Reservation')
 // Middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(cors())
 app.use(cookieParser())
 
 //Routes
