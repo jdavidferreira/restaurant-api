@@ -23,8 +23,8 @@ app.use(cookieParser())
 const restaurantRoute = require('./routes/restaurant')
 const reservationRoute = require('./routes/reservation')
 const authRoute = require('./routes/auth')
-app.use(restaurantRoute)
-app.use(reservationRoute)
-app.use(authRoute)
+app.use('/restaurant', restaurantRoute)
+app.use('/reservation', reservationRoute)
+app.use('/auth', authRoute)
 
 module.exports = app
