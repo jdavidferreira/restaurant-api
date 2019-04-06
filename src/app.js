@@ -7,7 +7,10 @@ const config = require('./config')
 const app = express()
 
 // MongoDB Connection
-mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
+mongoose.connect(config.MONGODB_URI, {
+  useNewUrlParser: true,
+  useCreateIndex: true
+})
 mongoose.connection.on('error', e => console.error(e))
 
 // Instanciate Models
@@ -18,7 +21,12 @@ require('./model/Reservation')
 // Middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(cors())
+app.use(
+  cors({
+    origin: config.CORS_ORIGIN,
+    credentials: true
+  })
+)
 app.use(cookieParser())
 
 //Routes

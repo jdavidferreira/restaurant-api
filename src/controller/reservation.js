@@ -63,7 +63,7 @@ exports.update = async (req, res) => {
   try {
     await Reservation.updateOne({ _id: req.params.id }, reservationData)
 
-    res.status(204).end()
+    res.status(204).json()
   } catch (err) {
     res.status(500).send(err)
   }
@@ -73,7 +73,7 @@ exports.delete = async (req, res) => {
   try {
     await Reservation.deleteOne({ _id: req.params.id })
 
-    res.status(204).end()
+    res.status(204).json()
   } catch (err) {
     res.status(500).send(err)
   }

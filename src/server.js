@@ -5,5 +5,5 @@ app.listen(config.PORT, err => {
   if (err) {
     process.exit(1)
   }
-  console.log('Server On!')
+  console.log(`Server listening at port: ${config.PORT}`)
 })
