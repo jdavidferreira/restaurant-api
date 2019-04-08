@@ -6,7 +6,7 @@ exports.requireUser = async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = await jwt.verify(token, config.SECRET_KEY || 'secretCode')
+      const decoded = await jwt.verify(token, config.SECRET_KEY)
 
       res.locals.userId = decoded.userId
 
@@ -16,5 +16,25 @@ exports.requireUser = async (req, res, next) => {
     }
   } else {
     res.status(401).json({ error: 'Not authorized' })
+  }
+}
+
+//should prevent oauth authentication if theire already logged in some user
+// needs to be reviewed
+exports.rejectIfLogged = async (req, res, next) => {
+  const token = req.cookies.token
+
+  if (token) {
+    try {
+      const decoded = await jwt.verify(token, config.SECRET_KEY)
+
+      res.locals.userId = decoded.userId
+
+      res.status(409).json({ error: 'Already looged in.' }) //409 = Conflict
+    } catch (_error) {
+      next()
+    }
+  } else {
+    next()
   }
 }
