@@ -2,11 +2,11 @@ const jwt = require('jsonwebtoken')
 const config = require('./config')
 
 exports.requireUser = async (req, res, next) => {
-  const token = req.cookies.token
+  const authToken = req.cookies.auth_token
 
-  if (token) {
+  if (authToken) {
     try {
-      const decoded = await jwt.verify(token, config.SECRET_KEY)
+      const decoded = await jwt.verify(authToken, config.SECRET_KEY)
 
       res.locals.userId = decoded.userId
 
@@ -22,11 +22,11 @@ exports.requireUser = async (req, res, next) => {
 //should prevent oauth authentication if theire already logged in some user
 // needs to be reviewed
 exports.rejectIfLogged = async (req, res, next) => {
-  const token = req.cookies.token
+  const authToken = req.cookies.auth_token
 
-  if (token) {
+  if (authToken) {
     try {
-      const decoded = await jwt.verify(token, config.SECRET_KEY)
+      const decoded = await jwt.verify(authToken, config.SECRET_KEY)
 
       res.locals.userId = decoded.userId
 

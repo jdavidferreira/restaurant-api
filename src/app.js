@@ -21,12 +21,7 @@ require('./model/Reservation')
 // Middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(
-  cors({
-    origin: config.CORS_ORIGIN,
-    credentials: true
-  })
-)
+app.use(cors())
 app.use(cookieParser())
 
 //Routes

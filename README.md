@@ -9,3 +9,4 @@ A WebAPI REST with Express + MongoDB + JWT Authentication.
 - MongoDB
 - Mongoose
 - JWT (jsonwebtoken)
+- Google OAuth
