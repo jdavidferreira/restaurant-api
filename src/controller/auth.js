@@ -118,5 +118,9 @@ exports.googleSignInCallback = async (req, res) => {
     expiresIn: '30m'
   })
 
+  res.cookie('token', authToken, {
+    expires: new Date(Date.now() + 900000),
+    httpOnly: true
+  })
   res.status(200).json({ authToken })
 }
