@@ -1,12 +1,11 @@
 const jwt = require('jsonwebtoken')
-const config = require('./config')
 
 exports.requireUser = async (req, res, next) => {
   const authToken = req.cookies.auth_token
 
   if (authToken) {
     try {
-      const decoded = await jwt.verify(authToken, config.SECRET_KEY)
+      const decoded = await jwt.verify(authToken, process.env.SECRET_KEY)
 
       res.locals.userId = decoded.userId
 
@@ -26,7 +25,7 @@ exports.rejectIfLogged = async (req, res, next) => {
 
   if (authToken) {
     try {
-      const decoded = await jwt.verify(authToken, config.SECRET_KEY)
+      const decoded = await jwt.verify(authToken, process.env.SECRET_KEY)
 
       res.locals.userId = decoded.userId
 

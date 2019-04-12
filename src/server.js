@@ -1,9 +1,8 @@
 const app = require('./app')
-const config = require('./config')
 
-app.listen(config.PORT, err => {
+app.listen(process.env.PORT, err => {
   if (err) {
     process.exit(1)
   }
-  console.log(`Server listening at port: ${config.PORT}`)
+  console.log(`Server listening at port: ${process.env.PORT}`)
 })

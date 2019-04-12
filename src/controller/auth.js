@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
-const config = require('../config')
 const fetch = require('node-fetch')
 const jwt = require('jsonwebtoken')
 
@@ -33,9 +32,13 @@ exports.login = async (req, res) => {
     let user = await User.authenticate(email, password)
 
     if (user) {
-      const authToken = await jwt.sign({ userId: user.id }, config.SECRET_KEY, {
-        expiresIn: '30m'
-      })
+      const authToken = await jwt.sign(
+        { userId: user.id },
+        process.env.SECRET_KEY,
+        {
+          expiresIn: '30m'
+        }
+      )
 
       res.status(200).json({ authToken })
     } else {
@@ -55,8 +58,7 @@ exports.logout = async (req, res) => {
 
 exports.googleSignIn = async (req, res) => {
   const urlEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
-  const clientId =
-    '794981758452-mh784g8d58m2ilehv6becr2jl787ji9b.apps.googleusercontent.com'
+  const clientId = process.env.CLIENT_ID
   const responseType = 'code'
   const scope = 'profile+email'
   const redirectUri =
@@ -79,9 +81,8 @@ exports.googleSignInCallback = async (req, res) => {
 
   const body = {
     code: code,
-    client_id:
-      '794981758452-mh784g8d58m2ilehv6becr2jl787ji9b.apps.googleusercontent.com',
-    client_secret: 'ulXGbWdefkQsYgJ0pRhIZ75W',
+    client_id: process.env.CLIENT_ID,
+    client_secret: process.env.CLIENT_SECRET,
     redirect_uri:
       'https://restaurant-api-123.herokuapp.com/auth/google/callback',
     grant_type: 'authorization_code'
@@ -114,9 +115,13 @@ exports.googleSignInCallback = async (req, res) => {
     user = await User.create({ email, password }) //create user
   }
 
-  const authToken = await jwt.sign({ userId: user.id }, config.SECRET_KEY, {
-    expiresIn: '30m'
-  })
+  const authToken = await jwt.sign(
+    { userId: user.id },
+    process.env.SECRET_KEY,
+    {
+      expiresIn: '30m'
+    }
+  )
 
   res.cookie('token', authToken, {
     expires: new Date(Date.now() + 900000),

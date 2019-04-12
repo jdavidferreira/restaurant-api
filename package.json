@@ -5,7 +5,8 @@
   "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server",
-    "start-nodemon": "nodemon ./src/server",
+    "start_local": "node -r dotenv/config ./src/server",
+    "start_nodemon": "nodemon -r dotenv/config ./src/server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -31,5 +32,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.20",
     "node-fetch": "^2.3.0"
+  },
+  "devDependencies": {
+    "dotenv": "^7.0.0"
   }
 }

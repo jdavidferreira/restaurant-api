@@ -2,12 +2,11 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const config = require('./config')
 
 const app = express()
 
 // MongoDB Connection
-mongoose.connect(config.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useCreateIndex: true
 })
@@ -21,7 +20,11 @@ require('./model/Reservation')
 // Middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-// app.use(cors())
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN.split(' ')
+  })
+)
 app.use(cookieParser())
 
 //Routes
