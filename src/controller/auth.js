@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
-const fetch = require('node-fetch')
 const jwt = require('jsonwebtoken')
 
 exports.register = async (req, res) => {
@@ -71,61 +70,29 @@ exports.googleSignIn = async (req, res) => {
 }
 
 exports.googleSignInCallback = async (req, res) => {
-  const error = req.query.error
+  const email = req.user.email
 
-  if (error) {
-    //cancel
-  }
-  //authorization code
-  const code = req.query.code
+  try {
+    let user = await User.findOne({ email }) //get that user
 
-  const body = {
-    code: code,
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    redirect_uri:
-      'https://restaurant-api-123.herokuapp.com/auth/google/callback',
-    grant_type: 'authorization_code'
-  }
-  //exchange for access token
-  let response = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    body: JSON.stringify(body)
-  })
+    if (!user) {
+      //if not exists
+      const password = Math.random()
+        .toString(36)
+        .slice(-8)
 
-  response = await response.json()
-  //token response
-  const accessToken = response.access_token
-  const personFields = 'names,emailAddresses'
-
-  let data = await fetch(
-    `https://people.googleapis.com/v1/people/me?personFields=${personFields}&access_token=${accessToken}`
-  )
-  data = await data.json()
-
-  const email = data.emailAddresses[0].value
-  const password = Math.random()
-    .toString(36)
-    .slice(-8)
-
-  let user = await User.findOne({ email }) //get that user
-
-  if (!user) {
-    //if not exists
-    user = await User.create({ email, password }) //create user
-  }
-
-  const authToken = await jwt.sign(
-    { userId: user.id },
-    process.env.SECRET_KEY,
-    {
-      expiresIn: '30m'
+      user = await User.create({ email, password }) //create user
     }
-  )
 
-  res.cookie('token', authToken, {
-    expires: new Date(Date.now() + 900000),
-    httpOnly: true
-  })
-  res.status(200).json({ authToken })
+    const authToken = await jwt.sign(
+      { userId: user.id },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: '30m'
+      }
+    )
+    res.status(200).json(authToken)
+  } catch (error) {
+    res.status(500)
+  }
 }

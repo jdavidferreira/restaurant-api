@@ -1,7 +1,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
-const cookieParser = require('cookie-parser')
 const cors = require('cors')
+const passport = require('passport')
+// const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const app = express()
 
@@ -25,7 +26,7 @@ app.use(
     origin: process.env.CORS_ORIGIN.split(' ')
   })
 )
-app.use(cookieParser())
+app.use(passport.initialize())
 
 //Routes
 const restaurantRoute = require('./routes/restaurant')
