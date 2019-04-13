@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
+const fetch = require('node-fetch')
 const jwt = require('jsonwebtoken')
 
 exports.register = async (req, res) => {
@@ -50,40 +51,43 @@ exports.login = async (req, res) => {
   }
 }
 
-exports.logout = async (req, res) => {
-  res.clearCookie('token')
-  res.status(200).json()
-}
+exports.google = async (req, res) => {
+  const code = req.query.code
 
-exports.googleSignIn = async (req, res) => {
-  const urlEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
-  const clientId = process.env.CLIENT_ID
-  const responseType = 'code'
-  const scope = 'profile+email'
-  const redirectUri =
-    'https://restaurant-api-123.herokuapp.com/auth/google/callback'
+  //exchange for access token
+  let response = await fetch('https://www.googleapis.com/oauth2/v4/token', {
+    method: 'POST',
+    body: JSON.stringify({
+      code: code,
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      redirect_uri: process.env.CALLBACK_URI,
+      grant_type: 'authorization_code'
+    })
+  })
+  response = await response.json()
 
-  //request token
-  res.redirect(
-    `${urlEndpoint}?client_id=${clientId}&response_type=${responseType}&scope=${scope}&redirect_uri=${redirectUri}`
+  //token response
+  const accessToken = response.access_token
+  const personFields = 'names,emailAddresses'
+
+  let data = await fetch(
+    `https://people.googleapis.com/v1/people/me?personFields=${personFields}&access_token=${accessToken}`
   )
-}
+  data = await data.json()
 
-exports.googleSignInCallback = async (req, res) => {
-  const email = req.user.email
+  const email = data.emailAddresses[0].value
 
   try {
     let user = await User.findOne({ email }) //get that user
 
     if (!user) {
-      //if not exists
-      const password = Math.random()
+      //if not existS
+      const password = Math.random() //random password
         .toString(36)
         .slice(-8)
-
       user = await User.create({ email, password }) //create user
     }
-
     const authToken = await jwt.sign(
       { userId: user.id },
       process.env.SECRET_KEY,
@@ -91,8 +95,8 @@ exports.googleSignInCallback = async (req, res) => {
         expiresIn: '30m'
       }
     )
-    res.status(200).json(authToken)
+    res.json({ authToken })
   } catch (error) {
-    res.status(500)
+    res.status(500).json(error)
   }
 }
