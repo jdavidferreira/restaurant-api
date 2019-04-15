@@ -29,8 +29,10 @@ app.use(
 const restaurantRoute = require('./routes/restaurant')
 const reservationRoute = require('./routes/reservation')
 const authRoute = require('./routes/auth')
+const userRoute = require('./routes/user')
 app.use('/restaurant', restaurantRoute)
 app.use('/reservation', reservationRoute)
 app.use('/auth', authRoute)
+app.use('/user', userRoute)
 
 module.exports = app

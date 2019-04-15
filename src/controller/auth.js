@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
     } else {
       res.status(500)
     }
-    res.send(err)
+    res.json(err)
   }
 }
 
@@ -47,13 +47,12 @@ exports.login = async (req, res) => {
         .json({ error: 'Authentication failed. Wrong email or password.' })
     }
   } catch (err) {
-    res.status(400).send({ error: 'Authentication failed.' })
+    res.status(400).json({ error: 'Authentication failed.' })
   }
 }
 
 exports.google = async (req, res) => {
-  const code = req.query.code
-
+  const code = req.body.code
   //exchange for access token
   let response = await fetch('https://www.googleapis.com/oauth2/v4/token', {
     method: 'POST',
@@ -66,7 +65,6 @@ exports.google = async (req, res) => {
     })
   })
   response = await response.json()
-
   //token response
   const accessToken = response.access_token
   const personFields = 'names,emailAddresses'

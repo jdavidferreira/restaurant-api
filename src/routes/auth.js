@@ -7,7 +7,6 @@ const auth = require('../controller/auth')
  */
 router.post('/register', auth.register)
 router.post('/login', auth.login)
-router.get('/logout', auth.logout)
-router.post('/google', auth.googleSignIn)
+router.post('/google', auth.google)
 
 module.exports = router

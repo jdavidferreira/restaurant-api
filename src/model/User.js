@@ -44,17 +44,20 @@ UserSchema.pre('save', async function(next) {
   next()
 })
 
-//encrypt password (if was modified) before update
-UserSchema.pre('update', async function(next) {
-  if (this.isModified('password')) {
-    try {
-      this.password = await bcrypt.hash(this.password, 8)
-    } catch (err) {
-      console.log('err pre update')
-      return next(err)
-    }
+// //encrypt password (if was modified) before updateOne
+UserSchema.pre('updateOne', async function(next) {
+  const password = this.getUpdate().$set.password
+
+  if (!password) {
+    return next()
   }
-  next()
+  try {
+    const hash = bcrypt.hashSync(password, 8)
+    this.getUpdate().$set.password = hash
+    next()
+  } catch (error) {
+    return next(error)
+  }
 })
 
 module.exports = mongoose.model('User', UserSchema)

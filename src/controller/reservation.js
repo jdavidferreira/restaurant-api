@@ -9,7 +9,7 @@ exports.findAllByRestaurant = async (req, res) => {
 
     res.json(reservations)
   } catch (e) {
-    res.status(400).send(e)
+    res.status(400).json(e)
   }
 }
 
@@ -21,7 +21,7 @@ exports.findAllByUser = async (req, res) => {
 
     res.json(reservations)
   } catch (e) {
-    res.status(400).send(e)
+    res.status(400).json(e)
   }
 }
 
@@ -31,7 +31,7 @@ exports.findById = async (req, res) => {
 
     res.json(reservation)
   } catch (e) {
-    res.status(422).send(e)
+    res.status(422).json(e)
   }
 }
 
@@ -49,7 +49,7 @@ exports.create = async (req, res) => {
 
     res.json(created)
   } catch (err) {
-    res.status(500).send(err)
+    res.status(500).json(err)
   }
 }
 
@@ -65,7 +65,7 @@ exports.update = async (req, res) => {
 
     res.status(204).json()
   } catch (err) {
-    res.status(500).send(err)
+    res.status(500).json(err)
   }
 }
 
@@ -75,6 +75,6 @@ exports.delete = async (req, res) => {
 
     res.status(204).json()
   } catch (err) {
-    res.status(500).send(err)
+    res.status(500).json(err)
   }
 }

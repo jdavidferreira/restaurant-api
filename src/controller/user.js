@@ -17,19 +17,20 @@ exports.create = async (req, res) => {
     } else {
       res.status(500)
     }
-    res.send(err)
+    res.json(err)
   }
 }
 
 exports.changePassword = async (req, res) => {
-  const email = req.body.email
-  const password = req.body.password
+  const id = req.params.id
+  let password = req.body.password
 
   try {
-    await User.findOneAndUpdate({ email }, { password })
+    await User.updateOne({ _id: id }, { $set: { password } })
 
-    res.status(200).json()
+    res.status(204).json({})
   } catch (err) {
-    res.status(500).send(err)
+    console.error(err)
+    res.status(500).json(err)
   }
 }
