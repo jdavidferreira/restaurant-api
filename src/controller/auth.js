@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const User = mongoose.model('User')
 const fetch = require('node-fetch')
 const jwt = require('jsonwebtoken')
+const passport = require('passport')
 
 exports.register = async (req, res) => {
   let user = {
@@ -25,30 +26,23 @@ exports.register = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-  const email = req.body.email
-  const password = req.body.password
-
-  try {
-    let user = await User.authenticate(email, password)
-
-    if (user) {
-      const authToken = await jwt.sign(
-        { userId: user.id },
-        process.env.SECRET_KEY,
-        {
-          expiresIn: '30m'
-        }
-      )
-
-      res.status(200).json({ authToken })
-    } else {
-      res
-        .status(400)
-        .json({ error: 'Authentication failed. Wrong email or password.' })
+  passport.authenticate('local', (err, user, info) => {
+    if (err || !user) {
+      return res.status(400).json(err || info)
     }
-  } catch (err) {
-    res.status(400).json({ error: 'Authentication failed.' })
-  }
+
+    req.login(user, { session: false }, err => {
+      if (err) {
+        res.send(err)
+      }
+      // generate a signed son web token with the contents of user object and return it in the response
+      const auth_token = jwt.sign({ user }, process.env.SECRET_KEY, {
+        expiresIn: '1h'
+      })
+
+      return res.json({ auth_token })
+    })
+  })(req, res)
 }
 
 exports.google = async (req, res) => {

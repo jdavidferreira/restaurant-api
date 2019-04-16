@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const passport = require('passport')
 
 const app = express()
 
@@ -11,11 +12,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
 mongoose.connection.on('error', e => console.error(e))
 
-// Instanciate Models
-require('./model/User')
-require('./model/Restaurant')
-require('./model/Reservation')
-
 // Middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -24,6 +20,14 @@ app.use(
     origin: process.env.CORS_ORIGIN.split(' ')
   })
 )
+app.use(passport.initialize())
+
+// Instanciate Models
+require('./model/User')
+require('./model/Restaurant')
+require('./model/Reservation')
+// Other stuff
+require('./passport')
 
 //Routes
 const restaurantRoute = require('./routes/restaurant')

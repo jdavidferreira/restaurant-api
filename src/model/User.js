@@ -18,6 +18,10 @@ const UserSchema = mongoose.Schema(
   { collection: 'user', versionKey: false }
 )
 
+UserSchema.methods.validatePassword = async function(password) {
+  return await bcrypt.compare(password, this.password)
+}
+
 UserSchema.statics.authenticate = async function(email, password) {
   // buscamos el usuario utilizando el email
   let user = await this.findOne({ email })
@@ -59,5 +63,15 @@ UserSchema.pre('updateOne', async function(next) {
     return next(error)
   }
 })
+
+UserSchema.set('toObject', { virtuals: true }) // retrieve the "id" virtual when calling user.toObject
+
+//removes "_id" and "password" fields
+UserSchema.methods.toJSON = function() {
+  var user = this.toObject()
+  delete user._id
+  delete user.password
+  return user
+}
 
 module.exports = mongoose.model('User', UserSchema)
