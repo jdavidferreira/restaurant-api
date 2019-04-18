@@ -21,10 +21,24 @@ exports.findById = async (req, res) => {
   }
 }
 
+exports.findByUser = async (req, res) => {
+  if (req.user.id !== req.params.id) {
+    res.status(403).json({ message: 'Identification error' })
+  }
+  try {
+    let restaurants = await Restaurant.find({ user: req.user.id })
+
+    res.json(restaurants)
+  } catch (e) {
+    res.status(422).json(e)
+  }
+}
+
 exports.create = async (req, res) => {
   const restaurant = {
     name: req.body.name,
-    address: req.address.body,
+    address: req.body.address,
+    user: req.user.id,
     categories: [],
     photos: []
   }

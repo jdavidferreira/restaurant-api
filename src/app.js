@@ -4,7 +4,6 @@ const cors = require('cors')
 const passport = require('passport')
 
 const app = express()
-
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,

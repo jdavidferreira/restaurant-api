@@ -4,28 +4,7 @@ const fetch = require('node-fetch')
 const jwt = require('jsonwebtoken')
 const passport = require('passport')
 
-exports.register = async (req, res) => {
-  let user = {
-    email: req.body.email,
-    password: req.body.password
-  }
-  try {
-    await User.create(user)
-
-    res.status(200).json()
-  } catch (err) {
-    // console.error(Object.keys(err.errors).map(e => err.errors[e].message))
-    if (err.name == 'ValidationError') {
-      //todo: show error message in response
-      res.status(400)
-    } else {
-      res.status(500)
-    }
-    res.json(err)
-  }
-}
-
-exports.login = async (req, res) => {
+exports.authToken = async (req, res) => {
   passport.authenticate('local', (err, user, info) => {
     if (err || !user) {
       return res.status(400).json(err || info)
