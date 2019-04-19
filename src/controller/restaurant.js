@@ -1,40 +1,29 @@
 const mongoose = require('mongoose')
 const Restaurant = mongoose.model('Restaurant')
 
-exports.findAll = async (req, res) => {
-  try {
-    let restaurants = await Restaurant.find()
+exports.findAll = wrapAsync(async (req, res) => {
+  let restaurants = await Restaurant.find()
 
-    res.json(restaurants)
-  } catch (e) {
-    res.status(400).json(e)
-  }
-}
+  res.json(restaurants)
+})
 
-exports.findById = async (req, res) => {
-  try {
-    let restaurant = await Restaurant.findOne({ _id: req.params.id })
+exports.findById = wrapAsync(async (req, res) => {
+  let restaurant = await Restaurant.findOne({ _id: req.params.id })
 
-    res.json(restaurant)
-  } catch (e) {
-    res.status(422).json(e)
-  }
-}
+  res.json(restaurant)
+})
 
-exports.findByUser = async (req, res) => {
+exports.findByUser = wrapAsync(async (req, res) => {
   if (req.user.id !== req.params.id) {
     res.status(403).json({ message: 'Identification error' })
   }
-  try {
-    let restaurants = await Restaurant.find({ user: req.user.id })
 
-    res.json(restaurants)
-  } catch (e) {
-    res.status(422).json(e)
-  }
-}
+  let restaurants = await Restaurant.find({ user: req.user.id })
 
-exports.create = async (req, res) => {
+  res.json(restaurants)
+})
+
+exports.create = wrapAsync(async (req, res) => {
   const restaurant = {
     name: req.body.name,
     address: req.body.address,
@@ -43,34 +32,49 @@ exports.create = async (req, res) => {
     photos: []
   }
 
-  try {
-    let created = await Restaurant.create(restaurant)
+  let created = await Restaurant.create(restaurant)
 
-    res.json(created)
-  } catch (err) {
-    res.status(500).json(err)
+  res.json(created)
+})
+
+exports.comment = wrapAsync(async (req, res) => {
+  let updated = await Restaurant.updateOne(
+    {
+      _id: req.params.id
+    },
+    {
+      $push: { text: req.body.comment, by: res.body.userId }
+    }
+  )
+
+  res.json(updated)
+})
+
+exports.update = wrapAsync(async (req, res) => {
+  const restaurant = {
+    name: req.body.name,
+    address: req.body.address,
+    user: req.user.id,
+    categories: [],
+    photos: []
   }
-}
 
-exports.comment = async (req, res) => {
-  const data = {
-    restaurantId: req.body.restaurantId,
-    userId: res.locals.userId,
-    comment: req.body.comment
-  }
+  let created = await Restaurant.update(
+    { _id: req.params.id },
+    { $set: restaurant }
+  )
 
-  try {
-    let updated = await Restaurant.updateOne(
-      {
-        _id: data.restaurantId
-      },
-      {
-        $push: { text: data.comment, by: data.userId }
-      }
-    )
+  res.json(created)
+})
 
-    res.json(updated)
-  } catch (err) {
-    res.status(500).json(err)
+exports.delete = wrapAsync(async (req, res) => {
+  await Restaurant.deleteOne({ id: req.params.id })
+
+  res.status(204).json()
+})
+
+function wrapAsync(fn) {
+  return function(req, res, next) {
+    fn(req, res, next).catch(next)
   }
 }

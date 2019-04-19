@@ -15,6 +15,8 @@ router.get('/:id', restaurant.findById)
 router.use(passport.authenticate('jwt', { session: false }))
 
 router.post('/', restaurant.create)
+router.patch(':id', restaurant.update)
+router.delete('/:id', restaurant.delete)
 router.patch('/:id/comment', restaurant.comment)
 
 module.exports = router

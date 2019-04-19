@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const reservation = require('../controller/reservation')
-const requireUser = require('../middlewares').requireUser
+const requireUser = require('../middleware').requireUser
 
 router.use('/', requireUser) // next routes require to be authenticated
 

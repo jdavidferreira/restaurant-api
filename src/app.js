@@ -9,7 +9,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useCreateIndex: true
 })
-mongoose.connection.on('error', e => console.error(e))
+mongoose.connection.on(
+  'error',
+  console.error.bind(console, 'MongoDB connection error:')
+)
 
 // Middlewares
 app.use(express.json())
@@ -37,5 +40,8 @@ app.use('/restaurant', restaurantRoute)
 app.use('/reservation', reservationRoute)
 app.use('/auth', authRoute)
 app.use('/user', userRoute)
+
+const middleware = require('./middleware')
+app.use(middleware.mongoErrorHandler)
 
 module.exports = app

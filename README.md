@@ -6,7 +6,7 @@ A WebAPI REST with Express + MongoDB + JWT Authentication.
 
 - NodeJS
 - ExpressJS
-- MongoDB
 - Mongoose
-- JWT (jsonwebtoken)
+- Passport (Local, JWT)
 - Google OAuth
+- Jest + Supertest

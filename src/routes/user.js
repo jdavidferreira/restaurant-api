@@ -13,6 +13,7 @@ router.post('/', user.create)
  * Next routes require authorization
  */
 router.use(passport.authenticate('jwt', { session: false }))
+
 router.post('/:id/change_password', user.changePassword)
 router.get('/:id/restaurant', restaurant.findByUser)
 

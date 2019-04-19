@@ -49,25 +49,21 @@ exports.google = async (req, res) => {
 
   const email = data.emailAddresses[0].value
 
-  try {
-    let user = await User.findOne({ email }) //get that user
+  let user = await User.findOne({ email }) //get that user
 
-    if (!user) {
-      //if not existS
-      const password = Math.random() //random password
-        .toString(36)
-        .slice(-8)
-      user = await User.create({ email, password }) //create user
-    }
-    const authToken = await jwt.sign(
-      { userId: user.id },
-      process.env.SECRET_KEY,
-      {
-        expiresIn: '30m'
-      }
-    )
-    res.json({ authToken })
-  } catch (error) {
-    res.status(500).json(error)
+  if (!user) {
+    //if not existS
+    const password = Math.random() //random password
+      .toString(36)
+      .slice(-8)
+    user = await User.create({ email, password }) //create user
   }
+  const authToken = await jwt.sign(
+    { userId: user.id },
+    process.env.SECRET_KEY,
+    {
+      expiresIn: '30m'
+    }
+  )
+  res.json({ authToken })
 }
