@@ -1,19 +1,19 @@
 const mongoose = require('mongoose')
 const Restaurant = mongoose.model('Restaurant')
 
-exports.findAll = wrapAsync(async (req, res) => {
+exports.findAll = async (req, res) => {
   let restaurants = await Restaurant.find()
 
   res.json(restaurants)
-})
+}
 
-exports.findById = wrapAsync(async (req, res) => {
+exports.findById = async (req, res) => {
   let restaurant = await Restaurant.findOne({ _id: req.params.id })
 
   res.json(restaurant)
-})
+}
 
-exports.findByUser = wrapAsync(async (req, res) => {
+exports.findByUser = async (req, res) => {
   if (req.user.id !== req.params.id) {
     res.status(403).json({ message: 'Identification error' })
   }
@@ -21,9 +21,9 @@ exports.findByUser = wrapAsync(async (req, res) => {
   let restaurants = await Restaurant.find({ user: req.user.id })
 
   res.json(restaurants)
-})
+}
 
-exports.create = wrapAsync(async (req, res) => {
+exports.create = async (req, res) => {
   const restaurant = {
     name: req.body.name,
     address: req.body.address,
@@ -35,9 +35,9 @@ exports.create = wrapAsync(async (req, res) => {
   let created = await Restaurant.create(restaurant)
 
   res.json(created)
-})
+}
 
-exports.comment = wrapAsync(async (req, res) => {
+exports.comment = async (req, res) => {
   let updated = await Restaurant.updateOne(
     {
       _id: req.params.id
@@ -48,9 +48,9 @@ exports.comment = wrapAsync(async (req, res) => {
   )
 
   res.json(updated)
-})
+}
 
-exports.update = wrapAsync(async (req, res) => {
+exports.update = async (req, res) => {
   const restaurant = {
     name: req.body.name,
     address: req.body.address,
@@ -65,16 +65,10 @@ exports.update = wrapAsync(async (req, res) => {
   )
 
   res.json(created)
-})
+}
 
-exports.delete = wrapAsync(async (req, res) => {
+exports.delete = async (req, res) => {
   await Restaurant.deleteOne({ id: req.params.id })
 
   res.status(204).json()
-})
-
-function wrapAsync(fn) {
-  return function(req, res, next) {
-    fn(req, res, next).catch(next)
-  }
 }

@@ -1,4 +1,5 @@
 const express = require('express')
+require('express-async-errors') //prevents wrapping async functions for error handling
 const mongoose = require('mongoose')
 const cors = require('cors')
 const passport = require('passport')

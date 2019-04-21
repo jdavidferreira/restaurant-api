@@ -58,12 +58,12 @@ exports.google = async (req, res) => {
       .slice(-8)
     user = await User.create({ email, password }) //create user
   }
-  const authToken = await jwt.sign(
+  const auth_token = await jwt.sign(
     { userId: user.id },
     process.env.SECRET_KEY,
     {
       expiresIn: '30m'
     }
   )
-  res.json({ authToken })
+  res.json({ auth_token })
 }
