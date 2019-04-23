@@ -28,13 +28,17 @@ exports.create = async (req, res) => {
     name: req.body.name,
     address: req.body.address,
     user: req.user.id,
-    categories: [],
-    photos: []
+    categories: JSON.parse(req.body.categories),
+    photos: req.files.map(f => {
+      const obj = {}
+      obj.uri = f.location
+      return obj
+    })
   }
 
   let created = await Restaurant.create(restaurant)
 
-  res.json(created)
+  res.json({ id: created.id })
 }
 
 exports.comment = async (req, res) => {

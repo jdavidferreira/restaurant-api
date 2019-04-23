@@ -26,23 +26,29 @@ exports.mongoErrorHandler = (error, req, res, next) => {
   let code = 400
   let message = 'Unknown error'
 
-  if (error.name === 'ValidationError') {
-    //this just prevent "[Collection's name] validation failed:" part of the error.message default
-    message = Object.keys(error.errors)
-      .map(e => `${error.errors[e].path} : ${error.errors[e].message}`)
-      .join(', ')
-  } else if (error.name === 'MongoError') {
-    switch (error.code) {
-      case 11000:
+  switch (error.name) {
+    case 'ValidationError':
+      //this just prevent "[Collection's name] validation failed:" part of the error.message default
+      message = Object.keys(error.errors)
+        .map(e => `${error.errors[e].path} : ${error.errors[e].message}`)
+        .join(', ')
+      break
+    case 'MongoError':
+      if (error.code === 11000) {
         code = 409
         message = 'Already exists in database'
-        break
-      default:
+      } else {
         message = error.message
-        break
-    }
-  } else {
-    return next(error)
+      }
+      break
+    case 'MulterError':
+      message = error.message
+      console.error(error)
+      break
+    default:
+      message = error.message
+      console.error(error)
+      break
   }
 
   res.status(code).json({ message })

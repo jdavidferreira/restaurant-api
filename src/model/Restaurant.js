@@ -17,14 +17,7 @@ const RestaurantSchema = mongoose.Schema(
       ref: 'User',
       required: true
     },
-    categories: [
-      {
-        name: {
-          type: String,
-          trim: true
-        }
-      }
-    ],
+    categories: [String],
     comments: [
       {
         text: {

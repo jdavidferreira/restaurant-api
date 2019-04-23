@@ -4,11 +4,12 @@ const app = require('../app')
 
 beforeEach(async () => {
   for (const i in mongoose.connection.collections) {
-    await mongoose.connection.collections[i].deleteOne({})
+    await mongoose.connection.collections[i].deleteMany({})
   }
 })
 
 afterAll(async () => {
+  await mongoose.connection.dropDatabase() //because first beforeeach is not working
   await mongoose.disconnect()
 })
 

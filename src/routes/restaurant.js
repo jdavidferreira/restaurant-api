@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const restaurant = require('../controller/restaurant')
 const passport = require('passport')
-
+const upload = require('../services/image-upload-aws-s3')
 /**
  * /restaurant/...
  */
@@ -14,7 +14,7 @@ router.get('/:id', restaurant.findById)
  */
 router.use(passport.authenticate('jwt', { session: false }))
 
-router.post('/', restaurant.create)
+router.post('/', upload.array('photos', 6), restaurant.create)
 router.patch(':id', restaurant.update)
 router.delete('/:id', restaurant.delete)
 router.patch('/:id/comment', restaurant.comment)
